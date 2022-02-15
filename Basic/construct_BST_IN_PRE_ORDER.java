@@ -1,27 +1,25 @@
 class Solution {
 public:
-    TreeNode* buildTree(vector<int>& ino, vector<int>& pos) {
-        //making a map to easily find element and its index
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        //constructing a map so we can easily find the element and index of inorder
         map<int,int>mp;
-        for(int i=0;i<ino.size();i++)
-             mp[ino[i]]=i;
-        //in postorder right left root we will start from end
-        TreeNode *root=build(pos,0,pos.size()-1,ino,0,ino.size()-1,mp);
-        
+        int sz=inorder.size();
+        for(int i=0;i<sz;i++)
+             mp[inorder[i]]=i;
+        TreeNode *root=build(preorder,0,preorder.size()-1,inorder,0,sz-1,mp);
         return root;
     }
-    TreeNode * build(vector<int>&pos,int ps,int pe,vector<int>&ino,int is,int ie,map<int,int>&mp){
-        if(is>ie || pe<ps)return NULL;
-        
-        TreeNode *node=new TreeNode(pos[pe]);
+    TreeNode *build(vector<int>&pre,int ps,int pe,vector<int>&ino,int is,int ie,map<int,int>&mp){
+        if(ps>pe || is>ie)return NULL;
+        //as preorder is root left right then 
+        TreeNode *node=new TreeNode(pre[ps]);
         int ind=mp[node->val];
         int diff=ind-is;
         
-        node->left=build(pos,ps,ps+diff-1,ino,is,ind-1,mp);
-        node->right=build(pos,ps+diff,pe-1,ino,ind+1,ie,mp);
-      
+        node->left=build(pre,ps+1,ps+diff,ino,is,ind-1,mp);
+        node->right=build(pre,ps+diff+1,pe,ino,ind+1,ie,mp);
         
         return node;
     }
-    
-};
+}
+;
